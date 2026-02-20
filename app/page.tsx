@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Hero from "@/components/hero"
 import SocialLinks from "@/components/social-links"
-import Testimonials from "@/components/testimonials"
+import HomeTestimonials from "@/components/home-testimonials"
 import Gallery from "@/components/gallery"
 import MusicBackground from "@/components/music-background"
 
@@ -24,7 +24,7 @@ export default function Home() {
       <div className="relative z-10">
         <Hero />
         <SocialLinks />
-        <Testimonials />
+        <HomeTestimonials />
         <Gallery />
       </div>
     </div>

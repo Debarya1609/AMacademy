@@ -4,16 +4,25 @@ import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   const toggleMenu = () => setIsOpen(!isOpen)
+  const closeMenu = () => setIsOpen(false)
+  const handleHomeClick = () => {
+    closeMenu()
+    if (pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+  }
 
   if (!mounted) return null
 
@@ -21,7 +30,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-gray-200 shadow-sm transition-all duration-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <Link href="#" className="flex-shrink-0 transition-opacity hover:opacity-80">
+          <Link href="/" onClick={handleHomeClick} className="flex-shrink-0 transition-opacity hover:opacity-80">
             <Image
               src="/logo-black.png"
               alt="AMacademy Logo"
@@ -34,19 +43,19 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
-            <Link href="#home" className="text-gray-700 hover:text-black transition duration-300 font-medium">
+            <Link href="/" onClick={handleHomeClick} className="text-gray-700 hover:text-black transition duration-300 font-medium">
               Home
             </Link>
-            <Link href="#about" className="text-gray-700 hover:text-black transition duration-300 font-medium">
+            <Link href="/#about" className="text-gray-700 hover:text-black transition duration-300 font-medium">
               About
             </Link>
             <Link href="/testimonials" className="text-gray-700 hover:text-black transition duration-300 font-medium">
               Testimonials
             </Link>
-            <Link href="#gallery" className="text-gray-700 hover:text-black transition duration-300 font-medium">
+            <Link href="/#gallery" className="text-gray-700 hover:text-black transition duration-300 font-medium">
               Gallery
             </Link>
-            <Link href="#contact" className="text-gray-700 hover:text-black transition duration-300 font-medium">
+            <Link href="/#contact" className="text-gray-700 hover:text-black transition duration-300 font-medium">
               Contact
             </Link>
           </div>
@@ -78,31 +87,36 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden pb-4 space-y-2 animate-in fade-in duration-300">
             <Link
-              href="#home"
+              href="/"
+              onClick={handleHomeClick}
               className="block px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-100 rounded transition duration-300 font-medium"
             >
               Home
             </Link>
             <Link
-              href="#about"
+              href="/#about"
+              onClick={closeMenu}
               className="block px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-100 rounded transition duration-300 font-medium"
             >
               About
             </Link>
             <Link
               href="/testimonials"
+              onClick={closeMenu}
               className="block px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-100 rounded transition duration-300 font-medium"
             >
               Testimonials
             </Link>
             <Link
-              href="#gallery"
+              href="/#gallery"
+              onClick={closeMenu}
               className="block px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-100 rounded transition duration-300 font-medium"
             >
               Gallery
             </Link>
             <Link
-              href="#contact"
+              href="/#contact"
+              onClick={closeMenu}
               className="block px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-100 rounded transition duration-300 font-medium"
             >
               Contact

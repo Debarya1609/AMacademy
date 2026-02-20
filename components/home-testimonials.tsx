@@ -71,11 +71,11 @@ function TestimonialCard({ name, role, quote, rating, distance }: TestimonialCar
   )
 }
 
-interface TestimonialsProps {
+interface HomeTestimonialsProps {
   testimonials?: TestimonialCardProps[]
 }
 
-export default function Testimonials({ testimonials: customTestimonials }: TestimonialsProps) {
+export default function HomeTestimonials({ testimonials: customTestimonials }: HomeTestimonialsProps) {
   const defaultTestimonials: TestimonialCardProps[] = [
     {
       name: "Aarav Sharma",
@@ -224,3 +224,4 @@ export default function Testimonials({ testimonials: customTestimonials }: Testi
     </section>
   )
 }
+
