@@ -30,6 +30,39 @@ export interface Database {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string
+          phone: string | null
+          rating: number
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message: string
+          phone?: string | null
+          rating?: number
+          role?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string
+          phone?: string | null
+          rating?: number
+          role?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -1,5 +1,4 @@
 import Testimonials from '@/components/testimonials'
-import MusicBackground from '@/components/music-background'
 
 export const metadata = {
   title: 'Testimonials - AMacademy | Music Academy',
@@ -14,11 +13,8 @@ export const metadata = {
 
 export default function TestimonialsPage() {
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden">
-      <MusicBackground />
-      <div className="relative z-10 pt-8 pb-16 max-w-7xl mx-auto px-4">
-        <Testimonials />
-      </div>
+    <div className="pt-8 pb-16">
+      <Testimonials />
     </div>
   )
 }
