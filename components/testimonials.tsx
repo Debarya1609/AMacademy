@@ -19,57 +19,6 @@ interface ApiReview {
   rating: number
 }
 
-const seedReviews: Review[] = [
-  {
-    name: "Aarav Sharma",
-    role: "Student",
-    message: "The classes made me confident and consistent. Every week I could feel the progress in my playing.",
-    rating: 5,
-  },
-  {
-    name: "Priya Patel",
-    role: "Parent",
-    message: "My daughter enjoys every session. The lessons are structured, patient, and highly encouraging.",
-    rating: 5,
-  },
-  {
-    name: "Rohan Singh",
-    role: "Student",
-    message: "From stage fear to stage confidence, AMacademy helped me develop both skill and mindset.",
-    rating: 5,
-  },
-  {
-    name: "Sneha Gupta",
-    role: "Student",
-    message: "Practice feels purposeful now. I understand not just what to play, but why it sounds good.",
-    rating: 5,
-  },
-  {
-    name: "Rajesh Kumar",
-    role: "Parent",
-    message: "One of the best decisions for my son. The teaching style balances discipline and creativity.",
-    rating: 5,
-  },
-  {
-    name: "Anjali Desai",
-    role: "Student",
-    message: "Friendly, focused, and motivating. I improved in technique and expression much faster than expected.",
-    rating: 5,
-  },
-  {
-    name: "Vikram Singh",
-    role: "Parent",
-    message: "The academy truly cares about individual growth. My child is excited to attend every class.",
-    rating: 5,
-  },
-  {
-    name: "Meera Nair",
-    role: "Student",
-    message: "The feedback is specific and practical. My rhythm and hand control improved significantly.",
-    rating: 5,
-  },
-]
-
 const COLUMN_COUNT = 4
 const TRACK_REPEAT_COUNT = 3
 
@@ -110,7 +59,8 @@ function ReviewCard({ review }: { review: Review }) {
 }
 
 export default function Testimonials() {
-  const [reviews, setReviews] = useState<Review[]>(seedReviews)
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formFeedback, setFormFeedback] = useState("")
   const columns = useMemo(() => buildColumnTracks(reviews, COLUMN_COUNT), [reviews])
@@ -130,6 +80,7 @@ export default function Testimonials() {
 
     const loadReviews = async () => {
       try {
+        setIsLoadingReviews(true)
         const response = await fetch("/api/reviews", { cache: "no-store" })
         if (!response.ok) return
         const payload = await response.json()
@@ -141,11 +92,17 @@ export default function Testimonials() {
           rating: Number(item.rating ?? 5),
         })) ?? []
 
-        if (isActive && normalized.length > 0) {
+        if (isActive) {
           setReviews(normalized)
         }
       } catch {
-        // Fall back to seed reviews when API is unavailable.
+        if (isActive) {
+          setReviews([])
+        }
+      } finally {
+        if (isActive) {
+          setIsLoadingReviews(false)
+        }
       }
     }
 
@@ -218,28 +175,36 @@ export default function Testimonials() {
       </div>
 
       <div className="rounded-2xl border border-zinc-300 bg-white/80 p-3 shadow-sm sm:p-4">
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {columns.map((column, index) => {
-            const directionClass = index % 2 === 0 ? "review-track-up" : "review-track-down"
-            const duration = 34 + index * 2
-            const driftDuration = 14 + index * 1.5
-            return (
-              <div key={index} className="review-column relative h-[420px] overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/75 p-2">
-                <div
-                  className={`review-track flex flex-col gap-3 ${directionClass}`}
-                  style={{
-                    animationDuration: `${duration}s, ${driftDuration}s`,
-                    animationDelay: `-${index * 5}s, -${index * 1.25}s`,
-                  }}
-                >
-                  {column.map((review, reviewIndex) => (
-                    <ReviewCard key={`${review.id ?? review.name}-${reviewIndex}`} review={review} />
-                  ))}
+        {isLoadingReviews ? (
+          <div className="flex h-[420px] items-center justify-center text-zinc-500">Loading reviews...</div>
+        ) : reviews.length === 0 ? (
+          <div className="flex h-[420px] items-center justify-center text-center text-zinc-500">
+            No reviews yet. Be the first to share your experience.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {columns.map((column, index) => {
+              const directionClass = index % 2 === 0 ? "review-track-up" : "review-track-down"
+              const duration = 34 + index * 2
+              const driftDuration = 14 + index * 1.5
+              return (
+                <div key={index} className="review-column relative h-[420px] overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/75 p-2">
+                  <div
+                    className={`review-track flex flex-col gap-3 ${directionClass}`}
+                    style={{
+                      animationDuration: `${duration}s, ${driftDuration}s`,
+                      animationDelay: `-${index * 5}s, -${index * 1.25}s`,
+                    }}
+                  >
+                    {column.map((review, reviewIndex) => (
+                      <ReviewCard key={`${review.id ?? review.name}-${reviewIndex}`} review={review} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       <div className="mt-16 grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
