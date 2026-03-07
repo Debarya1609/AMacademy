@@ -70,12 +70,23 @@ const seedReviews: Review[] = [
   },
 ]
 
-function toColumns(reviews: Review[], columnCount: number) {
-  const columns: Review[][] = Array.from({ length: columnCount }, () => [])
-  reviews.forEach((review, index) => {
-    columns[index % columnCount].push(review)
+const COLUMN_COUNT = 4
+const TRACK_REPEAT_COUNT = 3
+
+function rotateReviews(reviews: Review[], offset: number) {
+  if (reviews.length === 0) return []
+  const normalizedOffset = ((offset % reviews.length) + reviews.length) % reviews.length
+  return [...reviews.slice(normalizedOffset), ...reviews.slice(0, normalizedOffset)]
+}
+
+function buildColumnTracks(reviews: Review[], columnCount: number) {
+  if (reviews.length === 0) return Array.from({ length: columnCount }, () => [] as Review[])
+
+  const spread = Math.max(1, Math.floor(reviews.length / columnCount))
+  return Array.from({ length: columnCount }, (_, columnIndex) => {
+    const rotated = rotateReviews(reviews, columnIndex * spread)
+    return Array.from({ length: TRACK_REPEAT_COUNT }).flatMap(() => rotated)
   })
-  return columns.map((column) => (column.length > 0 ? [...column, ...column] : []))
 }
 
 function ReviewCard({ review }: { review: Review }) {
@@ -102,7 +113,7 @@ export default function Testimonials() {
   const [reviews, setReviews] = useState<Review[]>(seedReviews)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formFeedback, setFormFeedback] = useState("")
-  const columns = useMemo(() => toColumns(reviews, 4), [reviews])
+  const columns = useMemo(() => buildColumnTracks(reviews, COLUMN_COUNT), [reviews])
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -210,12 +221,16 @@ export default function Testimonials() {
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
           {columns.map((column, index) => {
             const directionClass = index % 2 === 0 ? "review-track-up" : "review-track-down"
-            const duration = 28 + index * 2
+            const duration = 34 + index * 2
+            const driftDuration = 14 + index * 1.5
             return (
               <div key={index} className="review-column relative h-[420px] overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/75 p-2">
                 <div
                   className={`review-track flex flex-col gap-3 ${directionClass}`}
-                  style={{ animationDuration: `${duration}s` }}
+                  style={{
+                    animationDuration: `${duration}s, ${driftDuration}s`,
+                    animationDelay: `-${index * 5}s, -${index * 1.25}s`,
+                  }}
                 >
                   {column.map((review, reviewIndex) => (
                     <ReviewCard key={`${review.id ?? review.name}-${reviewIndex}`} review={review} />
@@ -336,16 +351,21 @@ export default function Testimonials() {
       </div>
 
       <style jsx>{`
+        .review-track {
+          will-change: transform;
+          backface-visibility: hidden;
+        }
+
         .review-track-up {
-          animation-name: review-scroll-up;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
+          animation-name: review-scroll-up, review-drift;
+          animation-timing-function: linear, ease-in-out;
+          animation-iteration-count: infinite, infinite;
         }
 
         .review-track-down {
-          animation-name: review-scroll-down;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
+          animation-name: review-scroll-down, review-drift-reverse;
+          animation-timing-function: linear, ease-in-out;
+          animation-iteration-count: infinite, infinite;
         }
 
         .review-column:hover .review-track {
@@ -357,16 +377,40 @@ export default function Testimonials() {
             transform: translateY(0);
           }
           100% {
-            transform: translateY(-50%);
+            transform: translateY(-66.6667%);
           }
         }
 
         @keyframes review-scroll-down {
           0% {
-            transform: translateY(-50%);
+            transform: translateY(-66.6667%);
           }
           100% {
             transform: translateY(0);
+          }
+        }
+
+        @keyframes review-drift {
+          0% {
+            margin-left: 0px;
+          }
+          50% {
+            margin-left: 2px;
+          }
+          100% {
+            margin-left: 0px;
+          }
+        }
+
+        @keyframes review-drift-reverse {
+          0% {
+            margin-left: 2px;
+          }
+          50% {
+            margin-left: 0px;
+          }
+          100% {
+            margin-left: 2px;
           }
         }
       `}</style>

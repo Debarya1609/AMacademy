@@ -5,6 +5,9 @@ import { z } from "zod"
 import type { Database } from "@/lib/supabase/types"
 import { getSupabaseAnonKey, getSupabaseUrl } from "@/lib/supabase/shared"
 
+export const runtime = "nodejs"
+export const preferredRegion = "auto"
+
 const reviewCreateSchema = z.object({
   firstName: z.string().trim().min(2).max(80),
   lastName: z.string().trim().min(1).max(80),
@@ -15,13 +18,19 @@ const reviewCreateSchema = z.object({
   message: z.string().trim().min(5, "Message should be at least 5 characters.").max(3000),
 })
 
+let supabaseClient: ReturnType<typeof createClient<Database>> | null = null
+
 function createPublicSupabaseClient() {
-  return createClient<Database>(getSupabaseUrl(), getSupabaseAnonKey(), {
+  if (supabaseClient) return supabaseClient
+
+  supabaseClient = createClient<Database>(getSupabaseUrl(), getSupabaseAnonKey(), {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
     },
   })
+
+  return supabaseClient
 }
 
 export async function GET() {
@@ -31,13 +40,21 @@ export async function GET() {
       .from("reviews")
       .select("id, full_name, role, message, rating, created_at")
       .order("created_at", { ascending: false })
-      .limit(80)
+      .limit(120)
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ reviews: data ?? [] }, { status: 200 })
+    return NextResponse.json(
+      { reviews: data ?? [] },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "public, s-maxage=20, stale-while-revalidate=120",
+        },
+      },
+    )
   } catch (error) {
     console.error("GET /api/reviews failed:", error)
     return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 })
