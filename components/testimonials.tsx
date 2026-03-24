@@ -185,8 +185,8 @@ export default function Testimonials() {
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
             {columns.map((column, index) => {
               const directionClass = index % 2 === 0 ? "review-track-up" : "review-track-down"
-              const duration = 34 + index * 2
-              const driftDuration = 14 + index * 1.5
+              const duration = 52 + index * 3
+              const driftDuration = 20 + index * 2
               return (
                 <div key={index} className="review-column relative h-[420px] overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50/75 p-2">
                   <div

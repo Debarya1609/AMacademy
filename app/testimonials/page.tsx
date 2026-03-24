@@ -1,11 +1,11 @@
 import Testimonials from '@/components/testimonials'
 
 export const metadata = {
-  title: 'Testimonials - AMacademy | Music Academy',
-  description: 'Read testimonials from our students and parents about their experience at AMacademy music academy.',
+  title: 'Reviews - AMacademy | Music Academy',
+  description: 'Read reviews from our students and parents about their experience at AMacademy music academy.',
   openGraph: {
-    title: 'Testimonials - AMacademy',
-    description: 'Hear from our students and parents about their musical journey with AMacademy',
+    title: 'Reviews - AMacademy',
+    description: 'Read reviews from our students and parents about their musical journey with AMacademy',
     url: 'https://amacademy.com/testimonials',
     type: 'website',
   },

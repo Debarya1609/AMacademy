@@ -29,7 +29,7 @@ export default function Footer() {
                 Home
               </Link>
               <Link href="/testimonials" className="block text-zinc-200 hover:text-white transition-colors duration-300 font-medium">
-                Testimonials
+                Reviews
               </Link>
               <Link href="/#gallery" className="block text-zinc-200 hover:text-white transition-colors duration-300 font-medium">
                 Gallery

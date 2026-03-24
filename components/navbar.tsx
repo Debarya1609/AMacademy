@@ -50,7 +50,7 @@ export default function Navbar() {
               About
             </Link>
             <Link href="/testimonials" className="text-gray-700 hover:text-black transition duration-300 font-medium">
-              Testimonials
+              Reviews
             </Link>
             <Link href="/#gallery" className="text-gray-700 hover:text-black transition duration-300 font-medium">
               Gallery
@@ -105,7 +105,7 @@ export default function Navbar() {
               onClick={closeMenu}
               className="block px-4 py-2 text-gray-700 hover:text-black hover:bg-gray-100 rounded transition duration-300 font-medium"
             >
-              Testimonials
+              Reviews
             </Link>
             <Link
               href="/#gallery"
